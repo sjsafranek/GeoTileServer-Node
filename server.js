@@ -38,7 +38,31 @@ app.use(bodyParser.json());
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
-app.use('/tms/1.0', router);
+app.use('/tms', router);
+app.use(
+    '/static',
+    express.static('static', {
+        dotfiles: 'ignore',
+        etag: false,
+        extensions: ['htm', 'html'],
+        index: false,
+        maxAge: '1d',
+        redirect: false,
+        setHeaders: function (res, path, stat) {
+            res.set('x-timestamp', Date.now())
+        }
+    })
+);
+app.use(
+    '/cache',
+    express.static('cache', {
+        maxAge: '1d',
+        redirect: false,
+        setHeaders: function (res, path, stat) {
+            res.set('x-timestamp', Date.now())
+        }
+    })
+);
 
 // START THE SERVER
 // =============================================================================
