@@ -18,43 +18,53 @@
 	</body>
 	<script type="text/javascript">
 
-		var map,
-			baseLayers,
-			layerControl;
+		var app;
 
-		function initialize() {
-
-			baseLayers = {
+		var App = function(map_id, callback) {
+			this.map_id = map_id;
+			this.baseLayers = {
 				"OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 					attribution: '&copy; <a href="http://osm.org/copyright" target="_blank">OpenStreetMap</a> contributors',
 					reuseTiles: true
 				})
 			}
+			this.map = L.map(map_id, {
+							maxZoom:20,
+							layers: [
+								this.baseLayers['OpenStreetMap']
+							]
+						}).setView([0, 0], 2);
+			this.fetchDatasources();
+			callback && callback();
+		}
 
-			map = L.map('map',{
-				maxZoom:20,
-				layers: [
-					baseLayers['OpenStreetMap']
-				]
-			}).setView([0,0], 2);
-
+		App.prototype.fetchDatasources = function() {
+			var self = this;
+			if (this.layerControl) {
+				return;
+			}
 			$.get('/tms/1.0.0/', function(results){
 				var datasources = results.TileMapService.TileMaps;
 				for (var i=0; i<datasources.length; i++) {
 					var url = datasources[i].href + '/{z}/{x}/{y}.png';
 					var name = datasources[i].title;
-					baseLayers[name] = L.tileLayer(url, {
-				   		attribution: '&copy; <a href="https://github.com/sjsafranek/GeoTileServer-Node" target="_blank"> GeoTileServer </a>',
-				   		reuseTiles: true
+					self.baseLayers[name] = L.tileLayer(url, {
+						attribution: '&copy; <a href="https://github.com/sjsafranek/GeoTileServer-Node" target="_blank"> GeoTileServer </a>',
+						reuseTiles: true
 				   });
 				}
-				layerControl = L.control.layers(baseLayers, {});
-				layerControl.addTo(map);
+				self.layerControl = L.control.layers(self.baseLayers, {});
+				self.layerControl.addTo(self.map);
 			});
-
 		}
 
-		$(document).ready(initialize);
+		App.prototype.getMap = function() {
+			return this.map;
+		}
+
+		$(document).ready(function(){
+			app = new App('map');
+		});
 
 
 	</script>
