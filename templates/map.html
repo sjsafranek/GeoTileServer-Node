@@ -19,8 +19,8 @@
 	<script type="text/javascript">
 
 		var map,
-			baseLayers;
-		var server = 'http://localhost:3000';
+			baseLayers,
+			layerControl;
 
 		function initialize() {
 
@@ -38,20 +38,19 @@
 				]
 			}).setView([0,0], 2);
 
-
-			// var url  = server + '/tms/1.0/' + name + '/{z}/{x}/{y}.png';
-			var url  = server + '/tms/1.0/world_population/{z}/{x}/{y}.png';
-			console.log(url);
-			baseLayers['world_population'] = L.tileLayer(url, {
-				attribution: '&copy; <a href="https://github.com/sjsafranek/go-mapnik" target="_blank"> Go-Mapnik </a>',
-				reuseTiles: true
+			$.get('/tms/1.0.0/', function(results){
+				var datasources = results.TileMapService.TileMaps;
+				for (var i=0; i<datasources.length; i++) {
+					var url = datasources[i].href + '/{z}/{x}/{y}.png';
+					var name = datasources[i].title;
+					baseLayers[name] = L.tileLayer(url, {
+				   		attribution: '&copy; <a href="https://github.com/sjsafranek/GeoTileServer-Node" target="_blank"> GeoTileServer </a>',
+				   		reuseTiles: true
+				   });
+				}
+				layerControl = L.control.layers(baseLayers, {});
+				layerControl.addTo(map);
 			});
-
-			// Use `baseLayers` to create a leaflet layer control
-			// and add to map.
-			var layer_control = L.control.layers(baseLayers, {});
-			layer_control.addTo(map);
-
 
 		}
 

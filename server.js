@@ -6,6 +6,7 @@
 // vector tile server
 // https://www.npmjs.com/package/tilesplash
 
+var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 
@@ -63,6 +64,25 @@ app.use(
         }
     })
 );
+
+
+// MapView for datasources
+// app.use(express.staticProvider(__dirname + '/templates'));
+// app.engine('html'
+app.get('/map', function (req, res) {
+    log.info({
+        request: {
+            ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+            path: req.path,
+            userAgent: req.headers['user-agent']
+        }
+    });
+    fs.readFile(__dirname + '/templates/map.html', 'utf8', function(err, text){
+        res.send(text);
+    });
+});
+
+
 
 // START THE SERVER
 // =============================================================================

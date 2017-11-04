@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 // router.js
-var xml = require('xml');
 var express = require('express');
 var logger = require('./logger.js').logger;
 
@@ -18,6 +17,7 @@ var router = express.Router();              // get an instance of the express Ro
 
 
 // https://wiki.osgeo.org/wiki/Tile_Map_Service_Specification#global-geodetic
+
 
 // ApiRoot
 router.get('/', function (req, res) {
@@ -38,18 +38,6 @@ router.get('/', function (req, res) {
             }
         ]
     });
-
-    return;
-
-    res.set('Content-Type', 'text/xml');
-    res.send(xml(
-        '<?xml version="1.0" encoding="UTF-8" ?>'
-        +'<Services>'
-        +    '<TileMapService title="Example Tile Map Service" version="1.0.0" href="/tms/1.0.0/" />'
-        // +    '<TileMapService title="New Example Tile Map Service" version="1.1.0" href="http://tms.osgeo.org/1.1.0/" />'
-        // +    '<FancyFeatureService title="Features!" version="0.9" href="http://ffs.osgeo.org/0.9/" />'
-        +'</Services>'
-    ));
 });
 
 // TileMapService Resource
@@ -78,43 +66,6 @@ router.get('/1.0.0', function (req, res) {
             TileMaps: tileMaps
         }
     });
-
-    return;
-
-    res.set('Content-Type', 'text/xml');
-    res.send(xml(
-        '<?xml version="1.0" encoding="UTF-8" ?>'
-        + '<TileMapService version="1.0.0" services="http://tms.osgeo.org">'
-        +   '<Title>Tile Map Service</Title>'
-        +   '<Abstract>This is a longer description of the example tiling map service.</Abstract>'
-        //  | <KeywordList>example tile service</KeywordList>
-        //  | <ContactInformation>
-        //  |   <ContactPersonPrimary>
-        //  |     <ContactPerson>Paul Ramsey</ContactPerson>
-        //  |     <ContactOrganization>Refractions Research</ContactOrganization>
-        //  |   </ContactPersonPrimary>
-        //  |   <ContactPosition>Manager</ContactPosition>
-        //  |   <ContactAddress>
-        //  |     <AddressType>postal</AddressType>
-        //  |     <Address>300 - 1207 Douglas Street</Address>
-        //  |     <City>Victoria</City>
-        //  |     <StateOrProvince>British Columbia</StateOrProvince>
-        //  |     <PostCode>V8W2E7</PostCode>
-        //  |     <Country>Canada</Country>
-        //  |   </ContactAddress>
-        //  |   <ContactVoiceTelephone>12503833022</ContactVoiceTelephone>
-        //  |   <ContactFacsimileTelephone>12503832140</ContactFacsimileTelephone>
-        //  |   <ContactElectronicMailAddress>pramsey@refractions.net</ContactElectronicMailAddress>
-        //  | </ContactInformation>
-         + '<TileMaps>'
-            //  <TileMap
-            //    title="VMAP0 World Map"
-            //    srs="EPSG:4326"
-            //    profile="global-geodetic"
-            //    href="http://tms.osgeo.org/1.0.0/vmap0" />
-         +  '</TileMaps>'
-         +'</TileMapService>'
-    ));
 });
 
 
@@ -162,35 +113,6 @@ router.get('/1.0.0/:ds', function (req, res) {
             TileSets: tileSets
         }
     });
-
-    return;
-
-    res.set('Content-Type', 'text/xml');
-    res.send(xml(
-        '<?xml version="1.0" encoding="UTF-8" ?>'
-        +'<TileMap version="1.0.0" tilemapservice="http://tms.osgeo.org/1.0.0">'
-        +    '<Title>VMAP0 World Map</Title>'
-        +    '<Abstract>A map of the world built from the NGA VMAP0 vector data set.</Abstract>'
-            // | <KeywordList></KeywordList>
-            // | <Metadata type="TC211" mime-type="text/xml" href="http://www.org" />
-            // | <Attribution>
-            // |   <Title>National Geospatial Intelligence Agency</Title>
-            // |   <Logo width="10" height="10" href="http://nga.mil/logo.gif" mime-type="image/gif" />
-            // | </Attribution>
-            // | <WebMapContext href="http://wms.org" />
-            // | <Face>0</Face>
-        +    '<SRS>EPSG:4326</SRS>'
-        +    '<BoundingBox minx="-180" miny="-90" maxx="180" maxy="90" />'
-        +    '<Origin x="-180" y="-90" />'
-        +    '<TileFormat width="256" height="256" mime-type="image/png" extension="png" />'
-        +    '<TileSets profile=global-geodetic">'
-        +        '<TileSet href="http://tms.osgeo.org/1.0.0/vmap0/0" units-per-pixel="0.703125" order="0" />'
-        +        '<TileSet href="http://tms.osgeo.org/1.0.0/vmap0/1" units-per-pixel="0.3515625" order="1" />'
-        +        '<TileSet href="http://tms.osgeo.org/1.0.0/vmap0/2" units-per-pixel="0.17578125" order="2" />'
-        +        '<TileSet href="http://tms.osgeo.org/1.0.0/vmap0/3" units-per-pixel="0.08789063" order="3" />'
-        +    '</TileSets>'
-        +'</TileMap>'
-    ));
 });
 
 
